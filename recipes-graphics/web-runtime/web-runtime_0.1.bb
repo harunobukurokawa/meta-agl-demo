@@ -13,10 +13,6 @@ SRC_URI = "\
 "
 
 RDEPENDS_${PN} = "\
-  qtdeclarative-tools \
-  qtwayland-qmlplugins \
-  qtquickcontrols-qmlplugins \
-  qtwebengine \
   runxdg \
   bash \
 "
@@ -32,6 +28,4 @@ do_configure() {
 do_install() {
     install -d ${D}${bindir}
     install -m 0755 ${WORKDIR}/web-runtime ${D}${bindir}/web-runtime
-    install -m 0644 ${WORKDIR}/web-runtime.qml ${D}${bindir}/web-runtime.qml
-    install -m 0644 ${WORKDIR}/web-runtime-webkit.qml ${D}${bindir}/web-runtime-webkit.qml
 }
