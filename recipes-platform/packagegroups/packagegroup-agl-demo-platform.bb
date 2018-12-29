@@ -41,14 +41,8 @@ MOST_HVAC_dragonboard-410c = ""
 MAPVIEWER = "${@bb.utils.contains("DISTRO_FEATURES", "agl-mapviewer-demo", " mapviewer mapviewer-demo", "",d)}"
 
 AGL_APPS = " \
-    dashboard \
-    hvac \
-    mediaplayer \
     virtual/mixer  \
     virtual/navigation \
-    phone \
-    poiapp \
-    radio \
     settings \
     high-level-viwi-service \
     agl-service-signal-composer \
