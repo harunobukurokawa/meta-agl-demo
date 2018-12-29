@@ -38,14 +38,8 @@ MOST_HVAC_dra7xx-evm = ""
 MOST_HVAC_dragonboard-410c = ""
 
 AGL_APPS = " \
-    dashboard \
-    hvac \
-    mediaplayer \
     virtual/mixer  \
     virtual/navigation \
-    phone \
-    poiapp \
-    radio \
     settings \
     high-level-viwi-service \
     agl-service-signal-composer \
