@@ -4,12 +4,13 @@ token=$(echo -n "$1" | sed 's,.*token=,,')
 export AFM_APP_INSTALL_DIR=$(mktemp -d)
 cat << EOC >  $AFM_APP_INSTALL_DIR/runxdg.toml
 [application]
-role = "WebBrowser-$port" 
+role = "browser-$port" 
 method = "POSIX" 
 path = "/usr/bin/chromium" 
 params = [
      "--app=$1",
      "--kiosk",
+     "--in-process-gpu",
      "--disable-infobars",
      "--window-size=1050,1446",
      "--no-sandbox",
