@@ -1,0 +1,11 @@
+{
+  "id": "webapps-examples",
+  "title": "IVI Dashboard",
+  "description": "IVI dashboard",
+  "version": "0.0.0",
+  "vendor": "Igalia, S.L.",
+  "type": "web",
+  "main": "index.html",
+  "uiRevision": "2",
+  "icon": "icon.svg"
+}
