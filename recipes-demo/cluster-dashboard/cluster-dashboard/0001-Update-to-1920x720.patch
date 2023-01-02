@@ -1,0 +1,72 @@
+From 1694d0ab7960bd330aff63e84d403a129697c744 Mon Sep 17 00:00:00 2001
+From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Date: Mon, 19 Dec 2022 14:49:15 +0900
+Subject: [PATCH] Update to 1920x720
+
+Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+---
+ app/cluster-gauges.qml | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/app/cluster-gauges.qml b/app/cluster-gauges.qml
+index e4c299b..42b07d1 100644
+--- a/app/cluster-gauges.qml
++++ b/app/cluster-gauges.qml
+@@ -64,7 +64,7 @@ import QtQuick.Extras 1.4
+ ApplicationWindow {
+     id: root
+     width: 1920
+-    height: 1080
++    height: 720
+     visible: true
+     flags: Qt.FramelessWindowHint
+     style: ApplicationWindowStyle {
+@@ -80,7 +80,7 @@ ApplicationWindow {
+     Rectangle {
+         id: statusFrame
+         x: (parent.width - width) / 2
+-        y: 40
++        y: 20
+         width: 1280
+         height: 96
+         radius: height / 5
+@@ -379,15 +379,15 @@ ApplicationWindow {
+ 
+     Item {
+         x: 18
+-        y: 260
+-        width: 600
++        y: 160
++        width: 500
+         height: width
+ 
+         CircularGauge {
+             id: accelerometer
+             x: (parent.width - width) / 2
+             //y: (parent.height - height) / 2
+-            width: parent.width * 0.9
++            width: parent.width * 0.85
+             height: width
+ 
+             maximumValue: valueSource.mphDisplay ? 140 : 220
+@@ -399,14 +399,14 @@ ApplicationWindow {
+ 
+     Item {
+         x: 1302
+-        y: 260
+-        width: 600
++        y: 160
++        width: 500
+         height: width
+ 
+         CircularGauge {
+             id: tachometer
+             x: (parent.width - width) / 2
+-            width: parent.width * 0.9
++            width: parent.width * 0.85
+             height: width
+ 
+             maximumValue: 8
+-- 
+2.25.1
+
