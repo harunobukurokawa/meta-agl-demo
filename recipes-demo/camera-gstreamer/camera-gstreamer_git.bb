@@ -27,3 +27,10 @@ RDEPENDS:${PN} += " \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
 "
+
+# Boards that support the libcamerasrc GStreamer element set
+# MACHINE_FEATURES += " libcamera" in their machine .conf (see e.g.
+# meta-sparrow-hawk/conf/machine/sparrow-hawk.conf). This stays a no-op
+# (empty string) on every other machine, so it never affects builds that
+# don't opt in.
+RDEPENDS:${PN} += "${@bb.utils.contains('MACHINE_FEATURES', 'libcamera', 'libcamera-gst', '', d)}"
