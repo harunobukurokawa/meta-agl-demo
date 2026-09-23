@@ -1,0 +1,47 @@
+From 8f03af955f21b600e0cd34115759260e5fc03bee Mon Sep 17 00:00:00 2001
+From: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
+Date: Mon, 21 Sep 2026 23:53:32 +0900
+Subject: [PATCH] feat: Add libcamerasrc pipeline branch to camera-gstreamer
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+CLAUDE.md §7-2 で検討した通り、既存の v4l2/pipewire/still-image
+分岐チェーンに libcamerasrc 分岐を追加。ENABLE_LIBCAMERA_PATH=true
+でオプトインし、gst_pipeline_failed チェックの後段に置くことで
+失敗時は既存の still-image フォールバックを自然に継承する。
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+---
+ app/main.cpp                  |   9 +++++++++
+ camera_pipeline_flowchart.png | Bin 0 -> 206292 bytes
+ 2 files changed, 9 insertions(+)
+ create mode 100644 camera_pipeline_flowchart.png
+
+diff --git a/app/main.cpp b/app/main.cpp
+index 64a435b..3fc1aba 100644
+--- a/app/main.cpp
++++ b/app/main.cpp
+@@ -700,6 +700,10 @@ GstElement* create_pipeline(int* argc, char** argv[])
+ 	char *v4l2_path = getenv("ENABLE_V4L2_PATH");
+ 	bool v4l2 = false;
+ 
++	char *libcamera_path = getenv("ENABLE_LIBCAMERA_PATH");
++	bool libcamera_mode = libcamera_path &&
++		(g_str_equal(libcamera_path, "yes") || g_str_equal(libcamera_path, "true"));
++
+ 	char pipeline_str[1024];
+ 
+ 	camera_device = getenv("DEFAULT_V4L2_DEVICE");
+@@ -733,6 +737,11 @@ GstElement* create_pipeline(int* argc, char** argv[])
+ 			xstr(APP_DATA_PATH));
+ 		fallback_gst_pipeline_tried = TRUE;
+ 	}
++	else if (libcamera_mode) {
++		snprintf(pipeline_str, sizeof(pipeline_str),
++			"libcamerasrc ! video/x-raw,width=%d,height=%d,format=NV12,colorimetry=bt709,framerate=30/1 ! videoconvert ! waylandsink",
++			width, height);
++	}
+ 	else {
+ 		snprintf(pipeline_str, sizeof(pipeline_str), "pipewiresrc ! waylandsink");
+ 	}

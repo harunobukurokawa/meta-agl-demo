@@ -16,6 +16,12 @@ PV = "1.0+git${SRCPV}"
 SRC_URI = "git://gerrit.automotivelinux.org/gerrit/apps/camera-gstreamer;protocol=https;branch=${AGL_BRANCH}"
 SRCREV  = "97faa830c65258ba8b60fa53cdbfb3f9d810abb3"
 
+# WIP: adds an opt-in (ENABLE_LIBCAMERA_PATH=true) libcamerasrc pipeline
+# branch alongside the existing v4l2/pipewire/still-image ones. Kept as a
+# local patch (not yet merged upstream, unverified on real V4H hardware)
+# rather than moving SRCREV to the feature branch.
+SRC_URI += "file://0001-feat-Add-libcamerasrc-pipeline-branch-to-camera-gstr.patch"
+
 S  = "${WORKDIR}/git"
 
 inherit meson pkgconfig agl-app
@@ -28,9 +34,9 @@ RDEPENDS:${PN} += " \
     gstreamer1.0-plugins-bad \
 "
 
-# Boards that support the libcamerasrc GStreamer element set
-# MACHINE_FEATURES += " libcamera" in their machine .conf (see e.g.
-# meta-sparrow-hawk/conf/machine/sparrow-hawk.conf). This stays a no-op
-# (empty string) on every other machine, so it never affects builds that
-# don't opt in.
+# Boards that support the libcamerasrc GStreamer element set advertise
+# MACHINE_FEATURES:append:<soc-family> = " libcamera" from AGL's own
+# policy layer (see meta-agl-bsp/conf/include/agl_sparrow-hawk.inc).
+# This stays a no-op (empty string) on every other machine, so it never
+# affects builds that don't opt in.
 RDEPENDS:${PN} += "${@bb.utils.contains('MACHINE_FEATURES', 'libcamera', 'libcamera-gst', '', d)}"
