@@ -11,7 +11,24 @@ CLAUDE.md §7-2 で検討した通り、既存の v4l2/pipewire/still-image
 でオプトインし、gst_pipeline_failed チェックの後段に置くことで
 失敗時は既存の still-image フォールバックを自然に継承する。
 
-Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+ソースパッドに解像度・フォーマットを要求せず、videoconvert ! videoscale
+を挟んだ後段で caps を指定する。rcar-gen4 パイプラインハンドラは
+スケーラを持たず (validate() 内コメント "we have no scaler")、出力を
+センサー出力サイズに固定し、未対応フォーマットは XRGB8888 に
+フォールバックするため、上流に要求する形では必ず not-negotiated に
+なる。Sparrow Hawk (V4H) + imx219 実機で確認した実際のネゴシエーション
+結果は 3280x2464 BGRx 21fps colorimetry=1:1:5:1 であり、要求側で
+NV12 / 任意解像度 / 30fps / bt709 を指定することはできない。
+
+pixel-aspect-ratio=1/1 を明示しないと videoscale がアスペクト比補正の
+ための PAR を自動付与し、表示が歪む。
+
+センサーが 4:3 なのに対し表示面は縦長のため videoscale が上下に黒帯を
+付ける。そこに gdkpixbufoverlay で libcamera 公式ロゴ (ロゴ + "libcamera"
+の文字) を重ね、どの経路で描画しているか一目で分かるようにする。位置は
+フレームサイズに対する相対指定なので解像度が変わっても破綻しない。
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
 ---
  app/main.cpp                  |   9 +++++++++
  camera_pipeline_flowchart.png | Bin 0 -> 206292 bytes
@@ -39,8 +56,8 @@ index 64a435b..3fc1aba 100644
  	}
 +	else if (libcamera_mode) {
 +		snprintf(pipeline_str, sizeof(pipeline_str),
-+			"libcamerasrc ! video/x-raw,width=%d,height=%d,format=NV12,colorimetry=bt709,framerate=30/1 ! videoconvert ! waylandsink",
-+			width, height);
++			"libcamerasrc ! videoconvert ! videoscale ! video/x-raw,width=%d,height=%d,pixel-aspect-ratio=1/1 ! gdkpixbufoverlay location=%s/libcamera-logo.png relative-x=0.176 relative-y=0.80 ! waylandsink",
++			width, height, xstr(APP_DATA_PATH));
 +	}
  	else {
  		snprintf(pipeline_str, sizeof(pipeline_str), "pipewiresrc ! waylandsink");
